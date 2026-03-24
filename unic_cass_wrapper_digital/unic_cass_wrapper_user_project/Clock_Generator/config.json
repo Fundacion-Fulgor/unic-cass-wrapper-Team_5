@@ -1,0 +1,18 @@
+{
+    "meta": {
+        "version": 3,
+        "flow": "Classic",
+	"substituting_steps": {
+            "Magic.DRC": null,
+            "KLayout.DRC": null
+        }
+    },
+    "DESIGN_NAME": "user_project",
+    "VERILOG_FILES": "dir::src/*.sv",
+    "PNR_SDC_FILE": "dir::constraint.sdc",
+    "PL_TARGET_DENSITY": 0.68,
+
+    "GRT_ADJUSTMENT": 0,
+    "SYNTH_STRATEGY": "AREA 0",
+    "DIODE_INSERTION_STRATEGY": 4
+}
