@@ -1,0 +1,20 @@
+{
+    "meta": {
+        "version": 3,
+        "flow": "Classic",
+        "substituting_steps":{
+    		"KLayout.DRC": null,
+    		"Magic.DRC": null,
+    		"KLayout.StreamOut": "Magic.StreamOut",
+    		"KLayout.XOR": null
+	}
+    },
+    "DESIGN_NAME": "user_project_example",
+    "VERILOG_FILES": "dir::src/*.v",
+    "CLOCK_PERIOD": 10,
+    "CLOCK_PORT": "clk_i",
+    "FP_SIZING": "absolute",
+    "DIE_AREA": [0, 0, 200, 200],
+    "PDN_VPITCH": 50,
+    "PDN_HPITCH": 50
+}
