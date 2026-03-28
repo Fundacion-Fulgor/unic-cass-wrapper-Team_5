@@ -1,0 +1,15 @@
+{
+    "meta": {
+        "version": 3,
+        "flow": "Classic"
+    },
+    "DESIGN_NAME": "fft16_project",
+    "VERILOG_FILES": "dir::src/*.v",
+    "CLOCK_PERIOD": 10,
+    "CLOCK_PORT": "clk_i ui_PAD2CORE[2]",
+    "FP_SIZING": "absolute",
+    "DIE_AREA": [0, 0, 678.15, 697.14],
+    "CORE_AREA": [5.76, 15.12, 671.93, 678.62],
+    "ERROR_ON_LONG_WIRE": false,
+    "WIRE_LENGTH_THRESHOLD": 2000
+}
