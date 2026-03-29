@@ -3,11 +3,8 @@
         "version": 3,
         "flow": "Classic",
         "substituting_steps":{
-    		"KLayout.DRC": null,
-    		"Magic.DRC": null,
-    		"KLayout.StreamOut": "Magic.StreamOut",
-    		"KLayout.XOR": null
-	}
+                "KLayout.XOR": null
+        }
     },
     "DESIGN_NAME": "user_project_example",
     "VERILOG_FILES": "dir::src/*.v",

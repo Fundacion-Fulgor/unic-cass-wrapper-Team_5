@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-
 module fpga(
     `ifdef USE_POWER_PINS
     inout VPWR,
@@ -7,23 +6,22 @@ module fpga(
     `endif
     input  wire clk_i,
     input  wire rst_ni,
-    input  wire [16:0] ui_PAD2CORE,
-    output wire [16:0] uo_CORE2PAD
+    input  wire [6:4] ui_PAD2CORE,
+    output wire [2:2] uo_CORE2PAD
 );
-
     parameter CLK_FREQ  = 100_000_000;
     parameter BAUD_RATE = 9600;
 
-    reg [16:0] ui_reg;
+    reg [2:0] ui_reg;
     always @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni)
-            ui_reg <= 17'b0;
+            ui_reg <= 3'b0;
         else
             ui_reg <= ui_PAD2CORE;
     end
 
-    wire uart_rx = ui_reg[0];
-    wire [1:0] user_inputs = ui_reg[2:1];
+    wire uart_rx             = ui_reg[0];
+    wire [1:0] user_inputs   = ui_reg[2:1];
 
     wire [51:0] config_bits;
     wire        config_done;
@@ -50,16 +48,14 @@ module fpga(
         .user_output  (fabric_out)
     );
 
-    reg [16:0] uo_reg;
+    reg uo_reg;
     always @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni)
-            uo_reg <= 17'b0;
-        else begin
-            uo_reg[0]    <= config_done & fabric_out;
-            uo_reg[16:1] <= 16'b0;
-        end
+            uo_reg <= 1'b0;
+        else
+            uo_reg <= config_done & fabric_out;
     end
 
-    assign uo_CORE2PAD = uo_reg;
+    assign uo_CORE2PAD[2] = uo_reg;
 
 endmodule
