@@ -7,8 +7,8 @@ module fpga(
     `endif
     input  wire clk_i,
     input  wire rst_ni,
-    input  wire [16:0] ui_PAD2CORE,
-    output wire [16:0] uo_CORE2PAD
+    input  wire [6:4] ui_PAD2CORE,
+    output wire [2:2] uo_CORE2PAD
 );
 
     parameter CLK_FREQ  = 100_000_000;
