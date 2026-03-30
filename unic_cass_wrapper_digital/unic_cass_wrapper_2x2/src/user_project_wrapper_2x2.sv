@@ -112,14 +112,32 @@ module user_project_wrapper_2x2 (
     end
     endgenerate
 
-    assign uo_CORE2PAD[16:1] = 16'd1; // needed for the example.
-
-    user_project_example user_project_example_inst (
+    fft16_project fft16_project_inst (
         .clk_i  (io_clock_p2c),
         .rst_ni (io_reset_p2c),
-        .y      (ui_PAD2CORE[0]),
-        .x      (ui_PAD2CORE[16:1]),
-        .p      (uo_CORE2PAD[0])
+        .ui_PAD2CORE  (ui_PAD2CORE[3:0]),
+        .uo_CORE2PAD      (uo_CORE2PAD[1:0])
+    );
+
+    fpga_top fpga_top_inst (                    
+        .clk_i  (io_clock_p2c),
+        .rst_ni (io_reset_p2c),
+        .ui_PAD2CORE  (ui_PAD2CORE[6:4]),
+        .uo_CORE2PAD      (uo_CORE2PAD[2:2])
+    );
+
+    user_project user_project_inst (            //clock generator
+        .clk_i  (io_clock_p2c),
+        .rst_ni (io_reset_p2c),
+        .ui_PAD2CORE  (ui_PAD2CORE[10:7]),
+        .uo_CORE2PAD      (uo_CORE2PAD[5:3])
+    );
+
+    user_project_example user_project_example_inst (     //DSIC
+        .clk_i  (io_clock_p2c),
+        .rst_ni (io_reset_p2c),
+        .ui_PAD2CORE  (ui_PAD2CORE[14:11]),
+        .uo_CORE2PAD      (uo_CORE2PAD[16:6])
     );
 
 endmodule
