@@ -12,6 +12,10 @@ module user_project_wrapper_2x2 (
     wire [16:0] ui_PAD2CORE;
     wire [16:0] uo_CORE2PAD;
 
+    wire [1:0] unused_input;
+
+    assign unused_input = ui_PAD2CORE[16:15];
+
     // Power/ground pad instances
     generate
     for (genvar i=0; i<4; i++) begin : iovdd_pads
@@ -113,31 +117,31 @@ module user_project_wrapper_2x2 (
     endgenerate
 
     fft16_project fft16_project_inst (
-        .clk_i  (io_clock_p2c),
-        .rst_ni (io_reset_p2c),
+        .clk_i        (io_clock_p2c),
+        .rst_ni       (io_reset_p2c),
         .ui_PAD2CORE  (ui_PAD2CORE[3:0]),
-        .uo_CORE2PAD      (uo_CORE2PAD[1:0])
+        .uo_CORE2PAD  (uo_CORE2PAD[1:0])
     );
 
-    fpga_top fpga_top_inst (                    
-        .clk_i  (io_clock_p2c),
-        .rst_ni (io_reset_p2c),
+    fpga fpga_top_inst (                    
+        .clk_i        (io_clock_p2c),
+        .rst_ni       (io_reset_p2c),
         .ui_PAD2CORE  (ui_PAD2CORE[6:4]),
-        .uo_CORE2PAD      (uo_CORE2PAD[2:2])
+        .uo_CORE2PAD  (uo_CORE2PAD[2:2])
     );
 
-    user_project user_project_inst (            //clock generator
-        .clk_i  (io_clock_p2c),
-        .rst_ni (io_reset_p2c),
+    user_project user_project_inst ( //clock generator
+        .clk_i        (io_clock_p2c),
+        .rst_ni       (io_reset_p2c),
         .ui_PAD2CORE  (ui_PAD2CORE[10:7]),
-        .uo_CORE2PAD      (uo_CORE2PAD[5:3])
+        .uo_CORE2PAD  (uo_CORE2PAD[5:3])
     );
 
-    user_project_example user_project_example_inst (     //DSIC
-        .clk_i  (io_clock_p2c),
-        .rst_ni (io_reset_p2c),
+    user_project_example user_project_example_inst ( //DSIC
+        .clk_i        (io_clock_p2c),
+        .rst_ni       (io_reset_p2c),
         .ui_PAD2CORE  (ui_PAD2CORE[14:11]),
-        .uo_CORE2PAD      (uo_CORE2PAD[16:6])
+        .uo_CORE2PAD  (uo_CORE2PAD[16:6])
     );
 
 endmodule

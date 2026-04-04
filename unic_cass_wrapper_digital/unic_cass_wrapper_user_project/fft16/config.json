@@ -7,7 +7,7 @@
     "VERILOG_FILES": "dir::src/*.v",
     "CLOCK_PERIOD": 20,
     "CLOCK_PORT": "clk_i",
-    "FP_SIZING": "relative",
+    "FP_SIZING": "absolute",
     "DIE_AREA": [0, 0, 678.15, 697.14],
     "CORE_AREA": [5.76, 15.12, 671.93, 678.62],
     "ERROR_ON_LONG_WIRE": false,
