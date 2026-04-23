@@ -1,197 +1,199 @@
 {
-    "meta": {
-        "version": 3,
-        "flow": "Chip",
-        "substituting_steps": {
-            "Magic.DRC": null,
-            "Checker.IllegalOverlap": null
+  "meta": {
+    "version": 3,
+    "flow": "Chip",
+    "substituting_steps": {
+      "Magic.DRC": null,
+      "Checker.IllegalOverlap": null
+    }
+  },
+
+  "DESIGN_NAME": "user_project_wrapper_2x2",
+  "CLOCK_PERIOD": 10,
+  "CLOCK_PORT": "io_clock_PAD",
+  "CLOCK_NET": "sg13g2_IOPad_io_clock/p2c",
+  "VERILOG_FILES": ["dir::./src/user_project_wrapper_2x2.sv"],
+  "FALLBACK_SDC": "dir::./wrapper_constraints.sdc",
+
+  "FP_SIZING": "absolute",
+  "DIE_AREA": [0, 0, 2000, 2000],
+  "CORE_AREA": [358.0, 358.0, 1642, 1642],
+  "PDN_CORE_RING": true,
+  "PDN_CORE_RING_CONNECT_TO_PADS": true,
+  "MAGIC_EXT_UNIQUE": "notopports",
+
+  "PDN_ENABLE_PINS": false,
+
+  "PDN_CORE_RING_VWIDTH": 15,
+  "PDN_CORE_RING_HWIDTH": 15,
+
+  "PDN_CORE_RING_VSPACING": 3,
+  "PDN_CORE_RING_HSPACING": 3,
+
+  "USE_SLANG": true,
+
+  "PAD_BONDPAD_NAME": "bondpad_70x70_novias",
+  "EXTRA_GDS": "dir::bondpad_70x70_novias/gds/bondpad_70x70_novias.gds",
+  "EXTRA_LEFS": "dir::bondpad_70x70_novias/lef/bondpad_70x70_novias.lef",
+  "IGNORE_DISCONNECTED_MODULES": ["bondpad_70x70_novias"],
+
+  "PAD_WEST": [
+    "vdd_pads\\[0\\].vdd_pad",
+    "vss_pads\\[0\\].vss_pad",
+    "sg13g2_IOPadIn_ui\\[0\\].ui",
+    "sg13g2_IOPadIn_ui\\[1\\].ui",
+    "sg13g2_IOPadIn_ui\\[2\\].ui",
+    "sg13g2_IOPadIn_ui\\[3\\].ui",
+    "sg13g2_IOPadOut30mA_uo\\[0\\].uo",
+    "sg13g2_IOPad_io_reset",
+    "sg13g2_IOPadOut30mA_uo\\[1\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[2\\].uo",
+    "sg13g2_IOPadIn_ui\\[4\\].ui",
+    "iovdd_pads\\[0\\].iovdd_pad",
+    "iovss_pads\\[0\\].iovss_pad"
+  ],
+
+  "PAD_SOUTH": [
+    "vdd_pads\\[1\\].vdd_pad",
+    "vss_pads\\[1\\].vss_pad",
+    "sg13g2_IOPadIn_ui\\[5\\].ui",
+    "sg13g2_IOPadIn_ui\\[6\\].ui",
+    "sg13g2_IOPadIn_ui\\[11\\].ui",
+    "sg13g2_IOPadIn_ui\\[12\\].ui",
+    "sg13g2_IOPadIn_ui\\[13\\].ui",
+    "sg13g2_IOPadIn_ui\\[14\\].ui",
+    "sg13g2_IOPad_io_clock",
+    "sg13g2_IOPadOut30mA_uo\\[6\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[7\\].uo",
+    "iovdd_pads\\[1\\].iovdd_pad",
+    "iovss_pads\\[1\\].iovss_pad"
+  ],
+
+  "PAD_EAST": [
+    "vdd_pads\\[2\\].vdd_pad",
+    "vss_pads\\[2\\].vss_pad",
+    "sg13g2_IOPadOut30mA_uo\\[8\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[9\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[10\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[11\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[12\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[13\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[14\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[15\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[16\\].uo",
+    "iovdd_pads\\[2\\].iovdd_pad",
+    "iovss_pads\\[2\\].iovss_pad"
+  ],
+
+  "PAD_NORTH": [
+    "vdd_pads\\[3\\].vdd_pad",
+    "vss_pads\\[3\\].vss_pad",
+    "sg13g2_IOPadIn_ui\\[7\\].ui",
+    "sg13g2_IOPadIn_ui\\[8\\].ui",
+    "sg13g2_IOPadIn_ui\\[9\\].ui",
+    "sg13g2_IOPadIn_ui\\[10\\].ui",
+    "sg13g2_IOPadOut30mA_uo\\[3\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[4\\].uo",
+    "sg13g2_IOPadOut30mA_uo\\[5\\].uo",
+    "sg13g2_IOPadIn_ui\\[16\\].ui",
+    "sg13g2_IOPadIn_ui\\[15\\].ui",
+    "iovdd_pads\\[3\\].iovdd_pad",
+    "iovss_pads\\[3\\].iovss_pad"
+  ],
+
+  "VDD_NETS": ["VDD"],
+  "GND_NETS": ["VSS"],
+
+  "GRT_ALLOW_CONGESTION": true,
+  
+  "FP_MACRO_HORIZONTAL_HALO": 10,
+  "FP_MACRO_VERTICAL_HALO": 18,
+  "PDN_HORIZONTAL_HALO": 10,
+  "PDN_VERTICAL_HALO": 18,
+
+  "MACROS": {
+    "fft16_project": {
+      "gds": "dir::../unic_cass_wrapper_user_project/fft16/final/gds/fft16_project.gds",
+      "lef": "dir::../unic_cass_wrapper_user_project/fft16/final/lef/fft16_project.lef",
+      "nl": "dir::../unic_cass_wrapper_user_project/fft16/final/pnl/fft16_project.pnl.v",
+      "lib": {
+        "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/fft16/final/lib/nom_typ_1p20V_25C/fft16_project__nom_typ_1p20V_25C.lib",
+        "nom_fast_1p32V_m40C": "dir::../unic_cass_wrapper_user_project/fft16/final/lib/nom_fast_1p32V_m40C/fft16_project__nom_fast_1p32V_m40C.lib",
+        "nom_slow_1p08V_125C": "dir::../unic_cass_wrapper_user_project/fft16/final/lib/nom_slow_1p08V_125C/fft16_project__nom_slow_1p08V_125C.lib"
+      },
+      "spef": {
+        "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/fft16/final/spef/nom/fft16_project.nom.spef"
+      },
+      "instances": {
+        "fft16_project_inst": {
+          "location": [450, 760], 
+          "orientation": "N"
         }
+      }
     },
- 
-    "DESIGN_NAME": "user_project_wrapper_2x2",
-    "CLOCK_PERIOD": 22,
-    "CLOCK_PORT": "io_clock_PAD",
-    "CLOCK_NET": "sg13g2_IOPad_io_clock/p2c",
-    "VERILOG_FILES": [
-        "dir::./src/user_project_wrapper_2x2.sv"
-    ],
+    "fpga": {
+      "gds": "dir::../unic_cass_wrapper_user_project/fpga/final/gds/fpga.gds",
+      "lef": "dir::../unic_cass_wrapper_user_project/fpga/final/lef/fpga.lef",
+      "nl": "dir::../unic_cass_wrapper_user_project/fpga/final/pnl/fpga.pnl.v",
+      "lib": {
+        "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/fpga/final/lib/nom_typ_1p20V_25C/fpga__nom_typ_1p20V_25C.lib",
+        "nom_fast_1p32V_m40C": "dir::../unic_cass_wrapper_user_project/fpga/final/lib/nom_fast_1p32V_m40C/fpga__nom_fast_1p32V_m40C.lib",
+        "nom_slow_1p08V_125C": "dir::../unic_cass_wrapper_user_project/fpga/final/lib/nom_slow_1p08V_125C/fpga__nom_slow_1p08V_125C.lib"
+      },
+      "spef": {
+        "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/fpga/final/spef/nom/fpga.nom.spef"
+      },
+      "instances": {
+        "fpga_top_inst": {
+          "location": [450, 450],
+          "orientation": "N"
+        }
+      }
+    },
+    "user_project": {
+      "gds": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/gds/user_project.gds",
+      "lef": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/lef/user_project.lef",
+      "nl": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/pnl/user_project.pnl.v",
+      "lib": {
+        "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/lib/nom_typ_1p20V_25C/user_project__nom_typ_1p20V_25C.lib",
+        "nom_fast_1p32V_m40C": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/lib/nom_fast_1p32V_m40C/user_project__nom_fast_1p32V_m40C.lib",
+        "nom_slow_1p08V_125C": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/lib/nom_slow_1p08V_125C/user_project__nom_slow_1p08V_125C.lib"
+      },
+      "spef": {
+        "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/spef/nom/user_project.nom.spef"
+      },
+      "instances": {
+        "user_project_inst": {
+          "location": [1250, 1350],
+          "orientation": "N"
+        }
+      }
+    },
+    "user_project_example": {
+      "gds": "dir::../unic_cass_wrapper_user_project/dsic/final/gds/user_project_example.gds",
+      "lef": "dir::../unic_cass_wrapper_user_project/dsic/final/lef/user_project_example.lef",
+      "nl": "dir::../unic_cass_wrapper_user_project/dsic/final/pnl/user_project_example.pnl.v",
+      "lib": {
+        "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/dsic/final/lib/nom_typ_1p20V_25C/user_project_example__nom_typ_1p20V_25C.lib",
+        "nom_fast_1p32V_m40C": "dir::../unic_cass_wrapper_user_project/dsic/final/lib/nom_fast_1p32V_m40C/user_project_example__nom_fast_1p32V_m40C.lib",
+        "nom_slow_1p08V_125C": "dir::../unic_cass_wrapper_user_project/dsic/final/lib/nom_slow_1p08V_125C/user_project_example__nom_slow_1p08V_125C.lib"
+      },
+      "spef": {
+        "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/dsic/final/spef/nom/user_project_example.nom.spef"
+      },
+      "instances": {
+        "user_project_example_inst": {
+          "location": [1250, 450],
+          "orientation": "N"
+        }
+      }
+    }
+  },
 
-    "FP_SIZING": "absolute",
-    "DIE_AREA": [0, 0, 2000, 2000],
-    "CORE_AREA": [358.00, 358.00, 1642, 1642],
-    "PDN_CORE_RING": true,
-    "PDN_CORE_RING_CONNECT_TO_PADS": true,
-    "MAGIC_EXT_UNIQUE": "notopports",
-
-    "PDN_ENABLE_PINS": false,
-
-    "PDN_CORE_RING_VWIDTH": 15,
-    "PDN_CORE_RING_HWIDTH": 15,
-
-    "PDN_CORE_RING_VSPACING": 3,
-    "PDN_CORE_RING_HSPACING": 3,
-
-    "USE_SLANG": true,
-
-    "PAD_BONDPAD_NAME": "bondpad_70x70_novias",
-    "EXTRA_GDS": "dir::bondpad_70x70_novias/gds/bondpad_70x70_novias.gds",
-    "EXTRA_LEFS":"dir::bondpad_70x70_novias/lef/bondpad_70x70_novias.lef",
-    "IGNORE_DISCONNECTED_MODULES": [
-        "bondpad_70x70_novias"
-    ],
-
-    "PAD_WEST": [
-        "vdd_pads\\[0\\].vdd_pad",
-        "vss_pads\\[0\\].vss_pad",
-        "sg13g2_IOPadIn_ui\\[0\\].ui",
-        "sg13g2_IOPadIn_ui\\[1\\].ui",
-        "sg13g2_IOPadIn_ui\\[2\\].ui",
-        "sg13g2_IOPadIn_ui\\[3\\].ui",
-        "sg13g2_IOPadOut30mA_uo\\[0\\].uo",
-        "sg13g2_IOPad_io_reset",
-        "sg13g2_IOPadOut30mA_uo\\[1\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[2\\].uo",
-        "sg13g2_IOPadIn_ui\\[4\\].ui",
-        "iovdd_pads\\[0\\].iovdd_pad",
-        "iovss_pads\\[0\\].iovss_pad"
-    ],
-
-    "PAD_SOUTH": [
-        "vdd_pads\\[1\\].vdd_pad",
-        "vss_pads\\[1\\].vss_pad",
-        "sg13g2_IOPadIn_ui\\[5\\].ui",
-        "sg13g2_IOPadIn_ui\\[6\\].ui",
-        "sg13g2_IOPadIn_ui\\[11\\].ui",
-        "sg13g2_IOPadIn_ui\\[12\\].ui",
-        "sg13g2_IOPadIn_ui\\[13\\].ui",
-        "sg13g2_IOPadIn_ui\\[14\\].ui",
-        "sg13g2_IOPad_io_clock",
-        "sg13g2_IOPadOut30mA_uo\\[6\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[7\\].uo",   
-        "iovdd_pads\\[1\\].iovdd_pad",
-        "iovss_pads\\[1\\].iovss_pad"
-    ],
-
-    "PAD_EAST": [
-        "vdd_pads\\[2\\].vdd_pad",
-        "vss_pads\\[2\\].vss_pad",
-        "sg13g2_IOPadOut30mA_uo\\[8\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[9\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[10\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[11\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[12\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[13\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[14\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[15\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[16\\].uo",
-        "iovdd_pads\\[2\\].iovdd_pad",
-        "iovss_pads\\[2\\].iovss_pad"
-    ],
-
-    "PAD_NORTH": [
-        "vdd_pads\\[3\\].vdd_pad",
-        "vss_pads\\[3\\].vss_pad",
-        "sg13g2_IOPadIn_ui\\[7\\].ui",
-        "sg13g2_IOPadIn_ui\\[8\\].ui",
-        "sg13g2_IOPadIn_ui\\[9\\].ui",
-        "sg13g2_IOPadIn_ui\\[10\\].ui",
-        "sg13g2_IOPadOut30mA_uo\\[3\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[4\\].uo",
-        "sg13g2_IOPadOut30mA_uo\\[5\\].uo",
-        "sg13g2_IOPadIn_ui\\[16\\].ui",
-        "sg13g2_IOPadIn_ui\\[15\\].ui",
-        "iovdd_pads\\[3\\].iovdd_pad",
-        "iovss_pads\\[3\\].iovss_pad"
-    ],
-
-    "VDD_NETS": ["VDD"],
-    "GND_NETS": ["VSS"],
-
-    "GRT_ALLOW_CONGESTION": true,
-
-    "MACROS": {
-            "fft16_project": {
-                "gds": "dir::../unic_cass_wrapper_user_project/fft16/final/gds/fft16_project.gds",
-                "lef": "dir::../unic_cass_wrapper_user_project/fft16/final/lef/fft16_project.lef",
-                "nl": "dir::../unic_cass_wrapper_user_project/fft16/final/pnl/fft16_project.pnl.v",
-                "lib": {
-                    "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/fft16/final/lib/nom_typ_1p20V_25C/fft16_project__nom_typ_1p20V_25C.lib",
-                    "nom_fast_1p32V_m40C": "dir::../unic_cass_wrapper_user_project/fft16/final/lib/nom_fast_1p32V_m40C/fft16_project__nom_fast_1p32V_m40C.lib",
-                    "nom_slow_1p08V_125C": "dir::../unic_cass_wrapper_user_project/fft16/final/lib/nom_slow_1p08V_125C/fft16_project__nom_slow_1p08V_125C.lib"
-                },
-                "spef": {
-                    "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/fft16/final/spef/nom/fft16_project.nom.spef"
-                },
-                "instances": {
-                    "fft16_project_inst": {
-                        "location": [450, 660],
-                        "orientation": "N"
-                    }
-                }
-            },
-            "fpga": {
-                "gds": "dir::../unic_cass_wrapper_user_project/fpga/final/gds/fpga.gds",
-                "lef": "dir::../unic_cass_wrapper_user_project/fpga/final/lef/fpga.lef",
-                "nl": "dir::../unic_cass_wrapper_user_project/fpga/final/pnl/fpga.pnl.v",
-                "lib": {
-                    "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/fpga/final/lib/nom_typ_1p20V_25C/fpga__nom_typ_1p20V_25C.lib",
-                    "nom_fast_1p32V_m40C": "dir::../unic_cass_wrapper_user_project/fpga/final/lib/nom_fast_1p32V_m40C/fpga__nom_fast_1p32V_m40C.lib",
-                    "nom_slow_1p08V_125C": "dir::../unic_cass_wrapper_user_project/fpga/final/lib/nom_slow_1p08V_125C/fpga__nom_slow_1p08V_125C.lib"
-                },
-                "spef": {
-                    "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/fpga/final/spef/nom/fpga.nom.spef"
-                },
-                "instances": {
-                    "fpga_top_inst": {
-                        "location": [450, 450],
-                        "orientation": "N"
-                    }
-                }
-            },
-            "user_project": {
-                "gds": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/gds/user_project.gds",
-                "lef": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/lef/user_project.lef",
-                "nl": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/pnl/user_project.pnl.v",
-                "lib": {
-                    "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/lib/nom_typ_1p20V_25C/user_project__nom_typ_1p20V_25C.lib",
-                    "nom_fast_1p32V_m40C": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/lib/nom_fast_1p32V_m40C/user_project__nom_fast_1p32V_m40C.lib",
-                    "nom_slow_1p08V_125C": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/lib/nom_slow_1p08V_125C/user_project__nom_slow_1p08V_125C.lib"
-                },
-                "spef": {
-                    "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/Clock_Generator/final/spef/nom/user_project.nom.spef"
-                },
-                "instances": {
-                    "user_project_inst": {
-                        "location": [1250, 1350],
-                        "orientation": "N"
-                    }
-                }
-            },
-            "user_project_example": {
-                "gds": "dir::../unic_cass_wrapper_user_project/dsic/final/gds/user_project_example.gds",
-                "lef": "dir::../unic_cass_wrapper_user_project/dsic/final/lef/user_project_example.lef",
-                "nl": "dir::../unic_cass_wrapper_user_project/dsic/final/pnl/user_project_example.pnl.v",
-                "lib": {
-                    "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/dsic/final/lib/nom_typ_1p20V_25C/user_project_example__nom_typ_1p20V_25C.lib",
-                    "nom_fast_1p32V_m40C": "dir::../unic_cass_wrapper_user_project/dsic/final/lib/nom_fast_1p32V_m40C/user_project_example__nom_fast_1p32V_m40C.lib",
-                    "nom_slow_1p08V_125C": "dir::../unic_cass_wrapper_user_project/dsic/final/lib/nom_slow_1p08V_125C/user_project_example__nom_slow_1p08V_125C.lib"
-                },
-                "spef": {
-                    "nom_typ_1p20V_25C": "dir::../unic_cass_wrapper_user_project/dsic/final/spef/nom/user_project_example.nom.spef"
-                },
-                "instances": {
-                    "user_project_example_inst": {
-                        "location": [1200, 450],
-                        "orientation": "N"
-                    }
-                }
-            }
-        },
-
-    "PDN_MACRO_CONNECTIONS": [
-        "fft16_project_inst VDD VSS VPWR VGND",
-        "fpga_top_inst VDD VSS VPWR VGND",
-        "user_project_inst VDD VSS VPWR VGND",
-        "user_project_example_inst VDD VSS VPWR VGND"
-    ]
+  "PDN_MACRO_CONNECTIONS": [
+    "fft16_project_inst VDD VSS VPWR VGND",
+    "fpga_top_inst VDD VSS VPWR VGND",
+    "user_project_inst VDD VSS VPWR VGND",
+    "user_project_example_inst VDD VSS VPWR VGND"
+  ]
 }

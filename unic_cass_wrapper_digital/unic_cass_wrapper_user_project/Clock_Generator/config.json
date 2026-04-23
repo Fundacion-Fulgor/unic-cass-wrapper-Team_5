@@ -1,11 +1,7 @@
 {
     "meta": {
         "version": 3,
-        "flow": "Classic",
-	"substituting_steps": {
-            "Magic.DRC": null,
-            "KLayout.DRC": null
-        }
+        "flow": "Classic"
     },
     "DESIGN_NAME": "user_project",
     "VERILOG_FILES": "dir::src/*.sv",

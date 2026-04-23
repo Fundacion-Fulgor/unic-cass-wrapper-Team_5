@@ -12,6 +12,7 @@ module user_project_wrapper_2x2 (
     wire [16:0] ui_PAD2CORE;
     wire [16:0] uo_CORE2PAD;
 
+    (*keep*)
     wire [1:0] unused_input;
 
     assign unused_input = ui_PAD2CORE[16:15];

@@ -6,8 +6,8 @@ module fpga(
     `endif
     input  wire clk_i,
     input  wire rst_ni,
-    input  wire [6:4] ui_PAD2CORE,
-    output wire [2:2] uo_CORE2PAD
+    input  wire [2:0] ui_PAD2CORE,
+    output wire uo_CORE2PAD
 );
     parameter CLK_FREQ  = 100_000_000;
     parameter BAUD_RATE = 9600;
@@ -56,6 +56,6 @@ module fpga(
             uo_reg <= config_done & fabric_out;
     end
 
-    assign uo_CORE2PAD[2] = uo_reg;
+    assign uo_CORE2PAD = uo_reg;
 
 endmodule
