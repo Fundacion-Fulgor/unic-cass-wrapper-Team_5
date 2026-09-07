@@ -9,8 +9,8 @@
     "CLOCK_PORT": "clk_i",
     "FP_SIZING": "absolute",
     "BASE_SDC_FILE": "dir::constraints.sdc",
-    "DIE_AREA": [0, 0, 600, 600],
-    "CORE_AREA": [5.76, 15.12, 594.24, 584.88],
+    "DIE_AREA": [0, 0, 636, 636],
+    "CORE_AREA": [5.76, 15.12, 630.24, 620.88],
     "ERROR_ON_LONG_WIRE": false,
     "WIRE_LENGTH_THRESHOLD": 2500,
     "RUN_KLAYOUT_XOR": false

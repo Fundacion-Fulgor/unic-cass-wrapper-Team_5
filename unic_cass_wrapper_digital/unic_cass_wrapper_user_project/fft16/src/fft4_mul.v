@@ -1,91 +1,83 @@
-module fft4_mul (
+//=============================================================================
+// Updated: 2026-09-01
+// Twiddle multiplier. Multiplies a complex sample by a Q(NB_TW,NBF_TW)
+// twiddle factor and brings the product back to NB_DATA bits with rounding
+// and saturation. Two pipeline stages: multiply-accumulate, then clip.
+//=============================================================================
+
+module fft4_mul #(
+    parameter NB_DATA = 10,
+    parameter NB_TW   = 10,
+    parameter NBF_TW  =  9,
+    parameter NBF_OUT =  6
+) (
     `ifdef USE_POWER_PINS
-    inout                  VPWR,  // Common digital supply
-    inout                  VGND,  // Common digital ground
+    inout                       VPWR,
+    inout                       VGND,
     `endif
-    input                  i_clk,
-    input                  i_inverse,
-    ///////////////////// INPUTS  /////////////////////
-    input  signed [10-1:0] i_data_re,
-    input  signed [10-1:0] i_data_im,
-    input  signed [10-1:0] i_tw_re,
-    input  signed [10-1:0] i_tw_im,
-    ///////////////////// OUTPUTS /////////////////////
-    output signed [10-1:0] o_data_re,
-    output signed [10-1:0] o_data_im
+    output signed [NB_DATA-1:0] o_data_re,
+    output signed [NB_DATA-1:0] o_data_im,
+    input                       i_clk,
+    input                       i_en,
+    input  signed [NB_DATA-1:0] i_data_re,
+    input  signed [NB_DATA-1:0] i_data_im,
+    input  signed [NB_TW-1:0]   i_tw_re,
+    input  signed [NB_TW-1:0]   i_tw_im
 );
 
-///////////////////////////////////////////////////////////////////////////////
-// WIRE AND REGISTER
-///////////////////////////////////////////////////////////////////////////////
+localparam NB_PROD = NB_DATA + NB_TW + 1;
 
-wire signed [20-1:0] prod_xu;
-wire signed [20-1:0] prod_yv;
-wire signed [20-1:0] prod_xv;
-wire signed [20-1:0] prod_yu;
-wire signed [21-1:0] sum_re;
-wire signed [21-1:0] sum_im;
+wire signed [NB_DATA+NB_TW-1:0] prod_xu;
+wire signed [NB_DATA+NB_TW-1:0] prod_yv;
+wire signed [NB_DATA+NB_TW-1:0] prod_xv;
+wire signed [NB_DATA+NB_TW-1:0] prod_yu;
 
-wire signed [10-1:0] w_fft_re;
-wire signed [10-1:0] w_fft_im;
-wire signed [10-1:0] w_ifft_re;
-wire signed [10-1:0] w_ifft_im;
+reg  signed [NB_PROD-1:0]       sum_re_d;
+reg  signed [NB_PROD-1:0]       sum_im_d;
 
-reg  signed [10-1:0] r_out_re;
-reg  signed [10-1:0] r_out_im;
+wire signed [NB_DATA-1:0]       clip_re;
+wire signed [NB_DATA-1:0]       clip_im;
 
-///////////////////////////////////////////////////////////////////////////////
-// CL
-///////////////////////////////////////////////////////////////////////////////
+reg  signed [NB_DATA-1:0]       data_re_2d;
+reg  signed [NB_DATA-1:0]       data_im_2d;
 
 assign prod_xu = i_data_re * i_tw_re;
 assign prod_yv = i_data_im * i_tw_im;
 assign prod_xv = i_data_re * i_tw_im;
 assign prod_yu = i_data_im * i_tw_re;
 
-assign sum_re = prod_xu - prod_yv;
-assign sum_im = prod_xv + prod_yu;
+always @(posedge i_clk) begin
+    if (i_en) begin
+        sum_re_d <= prod_xu - prod_yv;
+        sum_im_d <= prod_xv + prod_yu;
+    end
+end
 
 clip_round #(
-    .NB_INP     (21), 
-    .NBF_INP    (6+9), 
-    .NB_OUT     (10), 
-    .NBF_OUT    (6),
-    .RND_MD     (1)
-) u_clip_fft (
+    .NB_INP    (NB_PROD),
+    .NBF_INP   (NBF_OUT + NBF_TW),
+    .NB_OUT    (NB_DATA),
+    .NBF_OUT   (NBF_OUT),
+    .RND_MD    (1)
+) u_clip_round (
     `ifdef USE_POWER_PINS
-    .VPWR       (VPWR),
-    .VGND       (VGND),
+    .VPWR      (VPWR),
+    .VGND      (VGND),
     `endif
-    .i_data_re  (sum_re),
-    .i_data_im  (sum_im),
-    .o_data_re  (w_fft_re),
-    .o_data_im  (w_fft_im)
-);
-
-clip_round #(
-    .NB_INP     (21), 
-    .NBF_INP    (3+9), 
-    .NB_OUT     (10), 
-    .NBF_OUT    (3),
-    .RND_MD     (1)
-) u_clip_ifft (
-    `ifdef USE_POWER_PINS
-    .VPWR       (VPWR),
-    .VGND       (VGND),
-    `endif
-    .i_data_re  (sum_re),
-    .i_data_im  (sum_im),
-    .o_data_re  (w_ifft_re),
-    .o_data_im  (w_ifft_im)
+    .o_data_re (clip_re),
+    .o_data_im (clip_im),
+    .i_data_re (sum_re_d),
+    .i_data_im (sum_im_d)
 );
 
 always @(posedge i_clk) begin
-    r_out_re <= (i_inverse)? w_ifft_re : w_fft_re;
-    r_out_im <= (i_inverse)? w_ifft_im : w_fft_im;
+    if (i_en) begin
+        data_re_2d <= clip_re;
+        data_im_2d <= clip_im;
+    end
 end
 
-assign o_data_re = r_out_re;
-assign o_data_im = r_out_im;
+assign o_data_re = data_re_2d;
+assign o_data_im = data_im_2d;
 
 endmodule

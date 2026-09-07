@@ -1,26 +1,33 @@
+//=============================================================================
+// Updated: 2026-09-01
+// Debug register file. Exposes the probe buses as a read-only address map and
+// latches the sys_config write. Probes are frozen by a snapshot taken on the
+// falling edge of the chip select, writes commit on its rising edge.
+//=============================================================================
+
 module debug_unit #(
-  parameter integer NB_ADDR = 7,
-  parameter integer NB_DATA = 8
-)(
-  `ifdef USE_POWER_PINS
-  inout                       VPWR,
-  inout                       VGND,
-  `endif
-  input  wire                 clk,
-  input  wire                 rst_n,
-  input  wire [NB_ADDR-1:0]   spi_addr,
-  input  wire [NB_DATA-1:0]   spi_wdata,
-  input  wire                 spi_rw,     // 1=READ, 0=WRITE from spi_slave_mode0
-  input  wire                 spi_ss_n,
-  output reg  [NB_DATA-1:0]   spi_rdata,
-  input  wire [NB_DATA-1:0]   status_flags,
-  input  wire [NB_DATA-1:0]   error_flags,
-  input  wire [NB_DATA-1:0]   cnt_inputs,
-  input  wire [NB_DATA-1:0]   cnt_outputs,
-  input  wire [NB_DATA-1:0]   last_out_re,
-  input  wire [NB_DATA-1:0]   last_out_im,
-  input  wire [NB_DATA-1:0]   mid_data_re,
-  output reg  [2:0]           sys_config
+    parameter NB_ADDR = 7,
+    parameter NB_DATA = 8
+) (
+    `ifdef USE_POWER_PINS
+    inout                      VPWR,
+    inout                      VGND,
+    `endif
+    output reg [NB_DATA-1:0]   o_spi_rdata,
+    output reg [2:0]           o_sys_config,
+    input                      i_clk,
+    input                      i_rstn,
+    input      [NB_ADDR-1:0]   i_spi_addr,
+    input      [NB_DATA-1:0]   i_spi_wdata,
+    input                      i_spi_rw,
+    input                      i_spi_ss_n,
+    input      [NB_DATA-1:0]   i_status_flags,
+    input      [NB_DATA-1:0]   i_error_flags,
+    input      [NB_DATA-1:0]   i_cnt_inputs,
+    input      [NB_DATA-1:0]   i_cnt_outputs,
+    input      [NB_DATA-1:0]   i_last_out_re,
+    input      [NB_DATA-1:0]   i_last_out_im,
+    input      [NB_DATA-1:0]   i_mid_data_re
 );
 
 localparam [NB_ADDR-1:0] ADDR_STATUS_FLAGS = 'h00;
@@ -32,160 +39,173 @@ localparam [NB_ADDR-1:0] ADDR_LAST_OUT_IM  = 'h05;
 localparam [NB_ADDR-1:0] ADDR_MID_DATA_RE  = 'h06;
 localparam [NB_ADDR-1:0] ADDR_SYS_CONFIG   = 'h10;
 
-// ---------------------------------------------------------------------------
-// ss_n triple-flop synchronizer
-// Falling edge -> snapshot_pulse (status registers captured)
-// Rising edge  -> commit_pulse   (write data captured)
-// ---------------------------------------------------------------------------
+reg  [2:0]         ss_sync;
+wire               commit_pulse;
 
-reg [2:0] ss_sync;
+reg  [NB_DATA-1:0] wdata_snap;
+reg  [NB_ADDR-1:0] addr_snap;
+reg                rw_snap;
+reg                commit_pulse_d;
 
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) ss_sync <= 3'b111;
-    else        ss_sync <= {ss_sync[1:0], spi_ss_n};
+wire [NB_DATA-1:0] status_flags_snap;
+wire [NB_DATA-1:0] error_flags_snap;
+wire [NB_DATA-1:0] cnt_inputs_snap;
+wire [NB_DATA-1:0] cnt_outputs_snap;
+wire [NB_DATA-1:0] last_out_re_snap;
+wire [NB_DATA-1:0] last_out_im_snap;
+wire [NB_DATA-1:0] mid_data_re_snap;
+
+always @(posedge i_clk) begin
+    if (!i_rstn) begin
+        ss_sync <= 3'b111;
+    end
+    else begin
+        ss_sync <= {ss_sync[1:0], i_spi_ss_n};
+    end
 end
 
-wire snapshot_pulse;
-wire commit_pulse;
-assign snapshot_pulse = (ss_sync[2] == 1'b1) && (ss_sync[1] == 1'b0);
 assign commit_pulse   = (ss_sync[2] == 1'b0) && (ss_sync[1] == 1'b1);
 
-// ---------------------------------------------------------------------------
-// Capture addr / wdata / rw on commit_pulse (ss_n rising edge)
-// rw_bit is stable from the 8th sclk cycle onward — well before ss_n rises
-// addr_out and data_out are stable from the last sclk cycle onward
-// ---------------------------------------------------------------------------
-
-reg [NB_DATA-1:0] wdata_snap;
-reg [NB_ADDR-1:0] addr_snap;
-reg               rw_snap;    // 1=READ, 0=WRITE
-
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
+always @(posedge i_clk) begin
+    if (!i_rstn) begin
         wdata_snap <= {NB_DATA{1'b0}};
         addr_snap  <= {NB_ADDR{1'b0}};
         rw_snap    <= 1'b1;
     end
     else if (commit_pulse) begin
-        wdata_snap <= spi_wdata;
-        addr_snap  <= spi_addr;
-        rw_snap    <= spi_rw;
+        wdata_snap <= i_spi_wdata;
+        addr_snap  <= i_spi_addr;
+        rw_snap    <= i_spi_rw;
     end
 end
 
-// ---------------------------------------------------------------------------
-// Write sys_config one cycle after commit_pulse so snapped values are stable
-// ---------------------------------------------------------------------------
-
-reg commit_pulse_q;
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) commit_pulse_q <= 1'b0;
-    else        commit_pulse_q <= commit_pulse;
+always @(posedge i_clk) begin
+    if (!i_rstn) begin
+        commit_pulse_d <= 1'b0;
+    end
+    else begin
+        commit_pulse_d <= commit_pulse;
+    end
 end
 
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n)
-        sys_config <= 3'b000;
-    else if (commit_pulse_q && !rw_snap && (addr_snap == ADDR_SYS_CONFIG))
-        sys_config <= wdata_snap[2:0];
+always @(posedge i_clk) begin
+    if (!i_rstn) begin
+        o_sys_config <= 3'b000;
+    end
+    else if (commit_pulse_d && !rw_snap && (addr_snap == ADDR_SYS_CONFIG)) begin
+        o_sys_config <= wdata_snap[2:0];
+    end
 end
 
-// ---------------------------------------------------------------------------
-// CDC Snapshots for probe/status signals — captured on ss_n falling edge
-// ---------------------------------------------------------------------------
-
-wire [NB_DATA-1:0] status_flags_sync;
-cdc_snapshot #(.DATA_WIDTH(NB_DATA)) u_cdc_status_flags (
-  `ifdef USE_POWER_PINS
-  .VPWR            (VPWR),  .VGND            (VGND),
-  `endif
-  .clk             (clk),   .rst_n           (rst_n),
-  .trigger_async_n (spi_ss_n),
-  .data_in         (status_flags),
-  .data_out        (status_flags_sync)
+cdc_snapshot #(
+    .DATA_WIDTH  (NB_DATA)
+) u_cdc_status_flags (
+    `ifdef USE_POWER_PINS
+    .VPWR        (VPWR),
+    .VGND        (VGND),
+    `endif
+    .o_data      (status_flags_snap),
+    .i_clk       (i_clk),
+    .i_rstn      (i_rstn),
+    .i_trigger_n (i_spi_ss_n),
+    .i_data      (i_status_flags)
 );
 
-wire [NB_DATA-1:0] error_flags_sync;
-cdc_snapshot #(.DATA_WIDTH(NB_DATA)) u_cdc_error_flags (
-  `ifdef USE_POWER_PINS
-  .VPWR            (VPWR),  .VGND            (VGND),
-  `endif
-  .clk             (clk),   .rst_n           (rst_n),
-  .trigger_async_n (spi_ss_n),
-  .data_in         (error_flags),
-  .data_out        (error_flags_sync)
+cdc_snapshot #(
+    .DATA_WIDTH  (NB_DATA)
+) u_cdc_error_flags (
+    `ifdef USE_POWER_PINS
+    .VPWR        (VPWR),
+    .VGND        (VGND),
+    `endif
+    .o_data      (error_flags_snap),
+    .i_clk       (i_clk),
+    .i_rstn      (i_rstn),
+    .i_trigger_n (i_spi_ss_n),
+    .i_data      (i_error_flags)
 );
 
-wire [NB_DATA-1:0] cnt_inputs_sync;
-cdc_snapshot #(.DATA_WIDTH(NB_DATA)) u_cdc_cnt_inputs (
-  `ifdef USE_POWER_PINS
-  .VPWR            (VPWR),  .VGND            (VGND),
-  `endif
-  .clk             (clk),   .rst_n           (rst_n),
-  .trigger_async_n (spi_ss_n),
-  .data_in         (cnt_inputs),
-  .data_out        (cnt_inputs_sync)
+cdc_snapshot #(
+    .DATA_WIDTH  (NB_DATA)
+) u_cdc_cnt_inputs (
+    `ifdef USE_POWER_PINS
+    .VPWR        (VPWR),
+    .VGND        (VGND),
+    `endif
+    .o_data      (cnt_inputs_snap),
+    .i_clk       (i_clk),
+    .i_rstn      (i_rstn),
+    .i_trigger_n (i_spi_ss_n),
+    .i_data      (i_cnt_inputs)
 );
 
-wire [NB_DATA-1:0] cnt_outputs_sync;
-cdc_snapshot #(.DATA_WIDTH(NB_DATA)) u_cdc_cnt_outputs (
-  `ifdef USE_POWER_PINS
-  .VPWR            (VPWR),  .VGND            (VGND),
-  `endif
-  .clk             (clk),   .rst_n           (rst_n),
-  .trigger_async_n (spi_ss_n),
-  .data_in         (cnt_outputs),
-  .data_out        (cnt_outputs_sync)
+cdc_snapshot #(
+    .DATA_WIDTH  (NB_DATA)
+) u_cdc_cnt_outputs (
+    `ifdef USE_POWER_PINS
+    .VPWR        (VPWR),
+    .VGND        (VGND),
+    `endif
+    .o_data      (cnt_outputs_snap),
+    .i_clk       (i_clk),
+    .i_rstn      (i_rstn),
+    .i_trigger_n (i_spi_ss_n),
+    .i_data      (i_cnt_outputs)
 );
 
-wire [NB_DATA-1:0] last_out_re_sync;
-cdc_snapshot #(.DATA_WIDTH(NB_DATA)) u_cdc_last_out_re (
-  `ifdef USE_POWER_PINS
-  .VPWR            (VPWR),  .VGND            (VGND),
-  `endif
-  .clk             (clk),   .rst_n           (rst_n),
-  .trigger_async_n (spi_ss_n),
-  .data_in         (last_out_re),
-  .data_out        (last_out_re_sync)
+cdc_snapshot #(
+    .DATA_WIDTH  (NB_DATA)
+) u_cdc_last_out_re (
+    `ifdef USE_POWER_PINS
+    .VPWR        (VPWR),
+    .VGND        (VGND),
+    `endif
+    .o_data      (last_out_re_snap),
+    .i_clk       (i_clk),
+    .i_rstn      (i_rstn),
+    .i_trigger_n (i_spi_ss_n),
+    .i_data      (i_last_out_re)
 );
 
-wire [NB_DATA-1:0] last_out_im_sync;
-cdc_snapshot #(.DATA_WIDTH(NB_DATA)) u_cdc_last_out_im (
-  `ifdef USE_POWER_PINS
-  .VPWR            (VPWR),  .VGND            (VGND),
-  `endif
-  .clk             (clk),   .rst_n           (rst_n),
-  .trigger_async_n (spi_ss_n),
-  .data_in         (last_out_im),
-  .data_out        (last_out_im_sync)
+cdc_snapshot #(
+    .DATA_WIDTH  (NB_DATA)
+) u_cdc_last_out_im (
+    `ifdef USE_POWER_PINS
+    .VPWR        (VPWR),
+    .VGND        (VGND),
+    `endif
+    .o_data      (last_out_im_snap),
+    .i_clk       (i_clk),
+    .i_rstn      (i_rstn),
+    .i_trigger_n (i_spi_ss_n),
+    .i_data      (i_last_out_im)
 );
 
-wire [NB_DATA-1:0] mid_data_re_sync;
-cdc_snapshot #(.DATA_WIDTH(NB_DATA)) u_cdc_mid_data_re (
-  `ifdef USE_POWER_PINS
-  .VPWR            (VPWR),  .VGND            (VGND),
-  `endif
-  .clk             (clk),   .rst_n           (rst_n),
-  .trigger_async_n (spi_ss_n),
-  .data_in         (mid_data_re),
-  .data_out        (mid_data_re_sync)
+cdc_snapshot #(
+    .DATA_WIDTH  (NB_DATA)
+) u_cdc_mid_data_re (
+    `ifdef USE_POWER_PINS
+    .VPWR        (VPWR),
+    .VGND        (VGND),
+    `endif
+    .o_data      (mid_data_re_snap),
+    .i_clk       (i_clk),
+    .i_rstn      (i_rstn),
+    .i_trigger_n (i_spi_ss_n),
+    .i_data      (i_mid_data_re)
 );
-
-// ---------------------------------------------------------------------------
-// Read mux — combinational on spi_addr directly
-// ---------------------------------------------------------------------------
 
 always @(*) begin
-    case (spi_addr)
-        ADDR_STATUS_FLAGS: spi_rdata = status_flags_sync;
-        ADDR_ERROR_FLAGS:  spi_rdata = error_flags_sync;
-        ADDR_CNT_INPUTS:   spi_rdata = cnt_inputs_sync;
-        ADDR_CNT_OUTPUTS:  spi_rdata = cnt_outputs_sync;
-        ADDR_LAST_OUT_RE:  spi_rdata = last_out_re_sync;
-        ADDR_LAST_OUT_IM:  spi_rdata = last_out_im_sync;
-        ADDR_MID_DATA_RE:  spi_rdata = mid_data_re_sync;
-        ADDR_SYS_CONFIG:   spi_rdata = {{(NB_DATA-3){1'b0}}, sys_config};
-        default:           spi_rdata = {NB_DATA{1'b0}};
+    case (i_spi_addr)
+        ADDR_STATUS_FLAGS: o_spi_rdata = status_flags_snap;
+        ADDR_ERROR_FLAGS:  o_spi_rdata = error_flags_snap;
+        ADDR_CNT_INPUTS:   o_spi_rdata = cnt_inputs_snap;
+        ADDR_CNT_OUTPUTS:  o_spi_rdata = cnt_outputs_snap;
+        ADDR_LAST_OUT_RE:  o_spi_rdata = last_out_re_snap;
+        ADDR_LAST_OUT_IM:  o_spi_rdata = last_out_im_snap;
+        ADDR_MID_DATA_RE:  o_spi_rdata = mid_data_re_snap;
+        ADDR_SYS_CONFIG:   o_spi_rdata = {{(NB_DATA-3){1'b0}}, o_sys_config};
+        default:           o_spi_rdata = {NB_DATA{1'b0}};
     endcase
 end
 

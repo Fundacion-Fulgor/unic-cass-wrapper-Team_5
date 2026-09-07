@@ -21,7 +21,7 @@ module fft16_project(
         .i_spi_sclk (ui_PAD2CORE[2]),
         .i_spi_mosi (ui_PAD2CORE[3]),
         .i_clk      (clk_i),
-        .i_rst_n    (rst_ni)
+        .i_rstn     (rst_ni)
     );
 
 endmodule
